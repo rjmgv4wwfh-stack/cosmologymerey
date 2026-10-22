@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Герцшпрунг–Рассел диаграммасы</title>
+<style>
+:root{color-scheme:dark;--bg:#02040d;--p:#0a1432;--l:#22346f;--t:#e8eeff;--m:#8fa3d6;--a:#ffcf4a;--ok:#4ade80;--bad:#ff6a6a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#0d1b4a,#02040d 70%) fixed #02040d;color:var(--t);font:16px/1.5 system-ui,"Segoe UI",Arial,sans-serif}
+header{padding:14px 18px;display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--l)}
+header h1{font-size:clamp(17px,3vw,24px);margin:0}
+header small{color:var(--m);display:block;font-size:13px}
+.earth{flex:none;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7fd0ff,#1a6fd6 45%,#0b8f4a 60%,#0a2a6b);box-shadow:0 0 14px #3aa0ff}
+main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;padding:14px;max-width:1250px;margin:auto}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+.card{background:var(--p);border:1px solid var(--l);border-radius:10px;padding:12px}
+canvas{width:100%;height:auto;display:block;border-radius:8px;cursor:crosshair;max-width:100%}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tabs button,.btn{background:#13245a;color:var(--t);border:1px solid var(--l);border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer}
+.tabs button.on,.btn{background:var(--a);color:#1a1200;border-color:var(--a);font-weight:600}
+.tab{display:none}.tab.on{display:block}
+h2{font-size:18px;margin:0 0 6px;color:var(--a)}
+p,li{color:#cdd8ff;margin:6px 0}
+#info,.box{background:#050c24;border:1px solid var(--l);border-radius:8px;padding:10px;margin-top:10px;min-height:48px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+td,th{border:1px solid var(--l);padding:4px 6px;text-align:center;white-space:nowrap}
+th{background:#13245a}
+input,select{background:#050c24;color:var(--t);border:1px solid var(--l);border-radius:6px;padding:4px;font:inherit;width:100%;min-width:70px}
+input[type=range]{padding:0}
+ol li.on{color:var(--a);font-weight:600}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+</style>
+</head>
+<body>
+<header><div class="earth"></div><div><h1>Жұлдыздар эволюциясы: Герцшпрунг–Рассел диаграммасы</h1><small>Физика, 11-сынып · 11.10.1.5 · Космология</small></div></header>
+<main>
+<div class="card"><canvas id="c" width="640" height="480"></canvas><div id="info">Диаграммадағы жұлдызды басыңыз.</div></div>
+<section class="card">
+<nav class="tabs"><button class="on" onclick="tab(0)">Диаграмма</button><button onclick="tab(1)">Эволюция</button><button onclick="tab(2)">Практикум</button><button onclick="tab(3)">Ойын</button></nav>
+
+<div class="tab on" id="t0">
+<h2>Диаграмма нені көрсетеді?</h2>
+<p>Герцшпрунг–Рассел диаграммасында әр жұлдыз нүкте болып орналасады: көлденең ось — температура (солдан оңға қарай <b>азаяды</b>), тік ось — жарқырау L (Күннің жарқырауымен салыстырғанда).</p>
+<ul>
+<li><b style="color:#ffd35a">Бас тізбек</b> — сутегі гелийге айналатын тұрақты жұлдыздар (Күн де осында).</li>
+<li><b style="color:#ff9a3c">Қызыл алыптар</b> — салқын, бірақ үлкен, сондықтан жарық.</li>
+<li><b style="color:#ff4d3a">Аса алыптар</b> — өте үлкен әрі жарық жұлдыздар.</li>
+<li><b style="color:#cfe0ff">Ақ ергежейлілер</b> — ыстық, бірақ өте кішкентай, сондықтан әлсіз.</li>
+</ul>
+<p>Жұлдыздың диаграммадағы орны оның эволюция сатысын көрсетеді.</p>
+</div>
+
+<div class="tab" id="t1">
+<h2>Жұлдыз қалай өзгереді?</h2>
+<p>Массаны таңдап, эволюцияны бастаңыз. Нүкте диаграммада қозғалады.</p>
+<p>Масса: <b id="mv">1.0</b> М☉ (Күн массасы)</p>
+<input type="range" id="m" min="0.5" max="25" step="0.1" value="1" oninput="prep()">
+<p id="mt" style="color:var(--m)"></p>
+<button class="btn" onclick="go()">▶ Эволюцияны бастау</button>
+<ol id="st" style="padding-left:20px"></ol>
+</div>
+
+<div class="tab" id="t2">
+<h2>Практикум</h2>
+<ol>
+<li>Диаграммадағы жұлдыздарды басып, кестеге қосыңыз (кемінде 6 жұлдыз, оның ішінде кемінде 3 бас тізбектен).</li>
+<li>R есептеңіз: <b>R = √L / (T / 5772)²</b> (R — Күн радиусымен, L — Күн жарқырауымен, T — Кельвинмен).</li>
+<li>Әр жұлдыздың түрін диаграммадағы орнына қарап таңдаңыз.</li>
+<li>Дәптерде lg T (х осі, өсу бағытымен) және lg L (у осі) бойынша график салыңыз. Бас тізбек нүктелері арқылы түзу жүргізіп, көлбеуін табыңыз: <b>k = Δ lg L / Δ lg T</b>.</li>
+</ol>
+<div class="tw"><table><thead><tr><th>Жұлдыз</th><th>T, K</th><th>L, L☉</th><th>lg T</th><th>lg L</th><th>R, R☉</th><th>Түрі</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+<p>Градиент k = <input id="sl" style="width:90px" placeholder="k" oninput="vals.k=this.value"></p>
+<button class="btn" onclick="check()">Тексеру</button>
+<div class="box" id="res">Нәтиже осында шығады.</div>
+<p style="color:var(--m);font-size:13px">Кесте мен графикті мұғалімге көрсетіңіз.</p>
+</div>
+
+<div class="tab" id="t3">
+<h2>Жұлдызды тап!</h2>
+<div class="box" id="gq"></div>
+<div class="box" id="gr"></div>
+<p>Ұпай: <b id="gs">0</b></p>
+<button class="btn" id="gn" style="display:none" onclick="nextQ()">Келесі →</button>
+<button class="btn" onclick="startGame()">Басынан бастау</button>
+</div>
+</section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const cv=$("c"),g=cv.getContext("2d"),W=640,H=480,ML=58,MR=14,MT=14,MB=44;
+const X=x=>ML+(4.7-x)/1.3*(W-ML-MR),Y=y=>MT+(6-y)/10*(H-MT-MB);
+const S=[["Күн",5772,1,1],["Сириус A",9940,25.4,1.71],["Вега",9602,40,2.36],["Спика",22400,12100,7.47],["Проксима Центавра",3042,0.0017,0.154],["Барнард жұлдызы",3134,0.0035,0.196],["Альфа Центавра A",5790,1.52,1.22],["Бетельгейзе",3600,126000,887],["Ригель",12100,120000,78.9],["Антарес",3660,75900,680],["Альдебаран",3900,439,44.2],["Арктур",4286,170,25.4],["Сириус B",25200,0.056,0.0084],["Процион B",7740,0.00049,0.01]].map(([n,T,L,R])=>({n,T,L,R,x:Math.log10(T),y:Math.log10(L)}));
+const NM={ms:"Бас тізбек",rg:"Қызыл алып",sg:"Аса алып",wd:"Ақ ергежейлі"};
+const cls=(x,y)=>{const d=y-8*(x-3.761);return Math.abs(d)<=1.2?"ms":d<0?"wd":y>=4.5?"sg":"rg"};
+S.forEach(s=>s.k=cls(s.x,s.y));
+const col=T=>T>25000?"#7aa2ff":T>10000?"#8fb8ff":T>7500?"#cfe0ff":T>6000?"#fff6c8":T>5000?"#ffd35a":T>3700?"#ff9a3c":"#ff4d3a";
+const fmt=v=>v>=1000||v<0.01?v.toExponential(2):+v.toPrecision(3);
+const bg=[...Array(90)].map(()=>[Math.random()*W,Math.random()*H,Math.random()*1.4+.3]);
+let mode=0,sel=null,added=[],vals={},evo=null,game=null;
+
+function draw(){
+ g.clearRect(0,0,W,H);g.fillStyle="#040818";g.fillRect(0,0,W,H);
+ bg.forEach(([a,b,r])=>{g.fillStyle="rgba(180,200,255,.35)";g.fillRect(a,b,r,r)});
+ g.save();g.beginPath();g.rect(ML,MT,W-ML-MR,H-MT-MB);g.clip();
+ const m=x=>8*(x-3.761);
+ g.fillStyle="rgba(80,140,255,.13)";g.beginPath();
+ [[4.7,m(4.7)+1.2],[3.4,m(3.4)+1.2],[3.4,m(3.4)-1.2],[4.7,m(4.7)-1.2]].forEach(([a,b],i)=>i?g.lineTo(X(a),Y(b)):g.moveTo(X(a),Y(b)));
+ g.fill();g.restore();
+ g.strokeStyle="rgba(90,120,220,.25)";g.fillStyle="#8fa3d6";g.font="12px system-ui";g.textAlign="center";
+ [40000,20000,10000,6000,4000].forEach(T=>{const x=X(Math.log10(T));g.beginPath();g.moveTo(x,MT);g.lineTo(x,H-MB);g.stroke();g.fillText(T,x,H-MB+15)});
+ g.textAlign="right";
+ for(let v=-4;v<=6;v+=2){const y=Y(v);g.beginPath();g.moveTo(ML,y);g.lineTo(W-MR,y);g.stroke();g.fillText(v,ML-6,y+4)}
+ g.textAlign="center";g.fillText("Температура T, K (солдан оңға қарай азаяды)",(W+ML)/2,H-8);
+ g.save();g.translate(14,H/2);g.rotate(-Math.PI/2);g.fillText("lg (L / L☉)",0,0);g.restore();
+ if(mode!=3){g.fillStyle="rgba(200,215,255,.85)";g.font="13px system-ui";
+  g.fillText("Бас тізбек",X(4.2),Y(3.9));g.fillText("Қызыл алыптар",X(3.62),Y(2.2));g.fillText("Аса алыптар",X(3.95),Y(5.6));g.fillText("Ақ ергежейлілер",X(4.4),Y(-2.8))}
+ if(mode!=3&&mode!=1)S.forEach(s=>{
+  const r=4+Math.min(8,Math.max(0,Math.log10(s.R)+2)*1.6);
+  g.shadowColor=col(s.T);g.shadowBlur=14;g.fillStyle=col(s.T);g.beginPath();g.arc(X(s.x),Y(s.y),r,0,7);g.fill();g.shadowBlur=0;
+  if(s==sel||added.includes(s)){g.strokeStyle="#fff";g.lineWidth=1.5;g.beginPath();g.arc(X(s.x),Y(s.y),r+4,0,7);g.stroke();g.lineWidth=1;g.fillStyle="#fff";g.font="11px system-ui";g.fillText(s.n,X(s.x),Y(s.y)-r-8)}
+ });
+ if(mode==1&&evo){const P=evo.P;g.setLineDash([5,5]);g.strokeStyle="rgba(255,255,255,.5)";g.beginPath();P.forEach(([a,b],i)=>i?g.lineTo(X(a),Y(b)):g.moveTo(X(a),Y(b)));g.stroke();g.setLineDash([]);
+  const [a,b]=evo.c,lr=.5*b-2*(a-3.7613),r=Math.min(16,3+Math.max(0,lr+2)*2.2);
+  g.shadowColor=col(10**a);g.shadowBlur=18;g.fillStyle=col(10**a);g.beginPath();g.arc(X(a),Y(b),r,0,7);g.fill();g.shadowBlur=0;
+  if(evo.t>=2&&evo.m>=8){g.font="30px system-ui";g.fillText("💥",X(a),Y(b)+10)}}
+ if(game&&game.rev&&mode==3){const s=game.rev;g.strokeStyle="#ffcf4a";g.lineWidth=2;g.beginPath();g.arc(X(s.x),Y(s.y),12,0,7);g.stroke();g.lineWidth=1;g.fillStyle=col(s.T);g.beginPath();g.arc(X(s.x),Y(s.y),6,0,7);g.fill()}
+}
+
+function tab(i){mode=i;evo=i==1?evo:evo;document.querySelectorAll(".tab").forEach((e,j)=>e.classList.toggle("on",j==i));document.querySelectorAll(".tabs button").forEach((e,j)=>e.classList.toggle("on",j==i));
+ if(i==1)prep();if(i==3&&!game)startGame();draw()}
+
+cv.onclick=e=>{const r=cv.getBoundingClientRect(),px=(e.clientX-r.left)*W/r.width,py=(e.clientY-r.top)*H/r.height;
+ if(mode==3)return guess(4.7-(px-ML)/(W-ML-MR)*1.3,6-(py-MT)/(H-MT-MB)*10);
+ let b=null,bd=18;S.forEach(s=>{const d=Math.hypot(X(s.x)-px,Y(s.y)-py);if(d<bd){bd=d;b=s}});
+ if(!b||mode==1)return;
+ if(mode==0){sel=b;$("info").innerHTML=`<b>${b.n}</b><br>T = ${b.T} K, L = ${fmt(b.L)} L☉, R = ${fmt(b.R)} R☉<br>Түрі: <b style="color:${col(b.T)}">${NM[b.k]}</b>`}
+ if(mode==2&&!added.includes(b)){added.push(b);vals[b.n]={};table()}
+ draw()};
+
+function table(){$("tb").innerHTML=added.map((s,i)=>`<tr><td>${s.n}</td><td>${s.T}</td><td>${fmt(s.L)}</td><td>${s.x.toFixed(2)}</td><td>${s.y.toFixed(2)}</td><td><input data-i="${i}" data-f="r" value="${vals[s.n].r||""}"></td><td><select data-i="${i}" data-f="t"><option value="">—</option>${Object.keys(NM).map(k=>`<option value="${k}"${vals[s.n].t==k?" selected":""}>${NM[k]}</option>`).join("")}</select></td><td id="m${i}"></td></tr>`).join("")}
+$("tb").oninput=$("tb").onchange=e=>{const d=e.target.dataset;if(d.f)vals[added[d.i].n][d.f]=e.target.value};
+
+function check(){
+ let a=0,b=0;
+ added.forEach((s,i)=>{const v=vals[s.n],rv=parseFloat((v.r||"").replace(",",".")),c=Math.sqrt(s.L)/(s.T/5772)**2,r1=Math.abs(rv-c)/c<.1,r2=v.t==s.k;a+=r1;b+=r2;
+  $("m"+i).innerHTML=`<span class="${r1?"ok":"bad"}">R ${r1?"✔":"✘"}</span> <span class="${r2?"ok":"bad"}">Түрі ${r2?"✔":"✘"}</span>`});
+ const ms=added.filter(s=>s.k=="ms");let k="";
+ if(ms.length>=2){const n=ms.length,mx=ms.reduce((q,s)=>q+s.x,0)/n,my=ms.reduce((q,s)=>q+s.y,0)/n,sl=ms.reduce((q,s)=>q+(s.x-mx)*(s.y-my),0)/ms.reduce((q,s)=>q+(s.x-mx)**2,0),u=parseFloat((vals.k||"").replace(",","."));
+  k=Math.abs(u-sl)/sl<.2?`<span class="ok">Градиент ✔ (k ≈ ${sl.toFixed(1)})</span>`:`<span class="bad">Градиент ✘ — қайта есептеп көріңіз</span>`}
+ else k="Градиент үшін бас тізбектен кемінде 2 жұлдыз қосыңыз.";
+ $("res").innerHTML=added.length?`Радиус: ${a}/${added.length} · Түрі: ${b}/${added.length}<br>${k}`:"Алдымен кестеге жұлдыздар қосыңыз."}
+
+const STG={lo:["Бас тізбек: ядрода сутегі гелийге айналады","Қызыл алып: ядро сығылады, сыртқы қабық ісінеді","Планетарлық тұмандық пен ақ ергежейлі"],hi:["Бас тізбек: ыстық әрі өте жарық жұлдыз","Аса алып: қабық орасан ұлғаяды","Аса жаңа жұлдыздың жарылысы → нейтрондық жұлдыз немесе қара құрдым"]};
+function prep(){const m=+$("m").value,x0=Math.log10(5772*m**.55),y0=3.5*Math.log10(m),hi=m>=8;
+ const P=hi?[[x0,y0],[Math.log10(3600),y0+1.4],[Math.log10(3600),y0+1.4]]:[[x0,y0],[Math.log10(3800),3+.3*Math.log10(m)],[Math.log10(14000),-2]];
+ evo={P,t:0,c:P[0],m};$("mv").textContent=m.toFixed(1);$("mt").textContent=hi?"М ≥ 8 М☉: массивті жұлдыз":"М < 8 М☉: Күнге ұқсас жұлдыз";
+ $("st").innerHTML=STG[hi?"hi":"lo"].map(t=>`<li>${t}</li>`).join("");hl(-1);draw()}
+function hl(k){document.querySelectorAll("#st li").forEach((e,i)=>e.classList.toggle("on",i==k))}
+function go(){prep();evo.t=0;step()}
+function step(){if(mode!=1)return;const e=evo;e.t=Math.min(2,e.t+.007);const t=e.t,k=t<1?0:1,u=t<1?t:t-1,A=e.P[k],B=e.P[k+1];e.c=[A[0]+(B[0]-A[0])*u,A[1]+(B[1]-A[1])*u];hl(t<.5?0:t<1.5?1:2);draw();if(t<2)requestAnimationFrame(step)}
+
+function startGame(){game={q:[...S].sort(()=>Math.random()-.5).slice(0,5),i:0,sc:0,ans:0,rev:0};$("gs").textContent=0;$("gn").style.display="none";ask()}
+function ask(){const s=game.q[game.i];game.rev=0;game.ans=0;$("gq").innerHTML=`<b>${game.i+1}/5</b> Жұлдыздың T = ${s.T} K, L = ${fmt(s.L)} L☉. Диаграммада қай аймақта орналасқан? Аймақты басыңыз.`;$("gr").textContent="";draw()}
+function guess(x,y){if(!game||game.ans||game.i>=5)return;const s=game.q[game.i],ok=cls(x,y)==s.k;game.ans=1;game.rev=s;if(ok)game.sc++;
+ $("gr").innerHTML=(ok?"✅ Дұрыс! ":"❌ Қате. ")+`Бұл — ${NM[s.k]} (${s.n}).`;$("gs").textContent=game.sc;$("gn").style.display="";draw()}
+function nextQ(){game.i++;$("gn").style.display="none";if(game.i>=5){game.rev=0;$("gq").innerHTML=`Нәтиже: <b>${game.sc}/5</b> ${game.sc>=4?"🌟 Астроном!":"Қайталап көріңіз!"}`;$("gr").textContent="";draw();return}ask()}
+draw();
+</script>
+</body>
+</html>
